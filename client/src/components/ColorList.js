@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axiosWithAuth from "../axios";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as yup from "yup";
 
 const initialColor = {
   color: "",
@@ -56,7 +57,13 @@ const ColorList = ({ colors, updateColors }) => {
   };
 
   const addNewColor = (formValues, actions) => {
-    axiosWithAuth().post("http://localhost:5000/api/colors/", formValues)
+    const colorToPost = {
+        color: formValues.color,
+        code: {hex: formValues.code}
+      };
+    debugger
+
+    axiosWithAuth().post("http://localhost:5000/api/colors/", colorToPost)
       .then(res => {
         const newColors = res.data;
         updateColors(newColors);
@@ -121,13 +128,26 @@ const ColorList = ({ colors, updateColors }) => {
       <Formik
         initialValues={{color: "", code: ""}}
         onSubmit={addNewColor}
+        validationSchema={
+          yup.object().shape({
+            color: yup.string().required("*color name required"),
+            code: yup.string()
+              .test(
+                "code",
+                "code must start with '#' and be seven characters long",
+                value => value !== undefined && value[0] === "#" && value.length === 7,
+              ),
+          })
+        }
         render={props => (
           <Form>
             <div className="field">
               <Field name="color" type="text" placeholder="color name" />
+              <ErrorMessage name="color" component="div" />
             </div>
             <div className="field">
               <Field name="code" type="text" placeholder="hex code" />
+              <ErrorMessage name="code" component="div" />
             </div>
             <button type="submit">Add Color</button>
           </Form>

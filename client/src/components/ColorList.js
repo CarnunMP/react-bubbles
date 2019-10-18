@@ -61,7 +61,6 @@ const ColorList = ({ colors, updateColors }) => {
         color: formValues.color,
         code: {hex: formValues.code}
       };
-    debugger
 
     axiosWithAuth().post("http://localhost:5000/api/colors/", colorToPost)
       .then(res => {

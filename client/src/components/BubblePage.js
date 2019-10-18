@@ -17,7 +17,7 @@ const BubblePage = () => {
       .catch(err => {
         alert(`BubblePage.js: ${err.message}`);
       });
-  }, []);
+  }, [colorList]);
 
   return (
     <>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axiosWithAuth from "../axios";
+import { Formik, Form, Field } from "formik";
 
 const initialColor = {
   color: "",
@@ -54,6 +55,18 @@ const ColorList = ({ colors, updateColors }) => {
       });
   };
 
+  const addNewColor = (formValues, actions) => {
+    axiosWithAuth().post("http://localhost:5000/api/colors/", formValues)
+      .then(res => {
+        const newColors = res.data;
+        updateColors(newColors);
+        actions.resetForm();
+      })
+      .catch(err =>{
+        alert(`ColorList.js, addNewolor(formValues, actions): ${err.message}`);
+      });
+  };
+
   return (
     <div className="colors-wrap">
       <p>colors</p>
@@ -105,6 +118,21 @@ const ColorList = ({ colors, updateColors }) => {
       )}
       <div className="spacer" />
       {/* stretch - build another form here to add a color */}
+      <Formik
+        initialValues={{color: "", code: ""}}
+        onSubmit={addNewColor}
+        render={props => (
+          <Form>
+            <div className="field">
+              <Field name="color" type="text" placeholder="color name" />
+            </div>
+            <div className="field">
+              <Field name="code" type="text" placeholder="hex code" />
+            </div>
+            <button type="submit">Add Color</button>
+          </Form>
+        )}
+      />
     </div>
   );
 };

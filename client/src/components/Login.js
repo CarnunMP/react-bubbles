@@ -1,7 +1,7 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
 import axios from "axios";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as yup from "yup";
 
 const Login = (props) => {
   // make a post request to retrieve a token from the api
@@ -24,19 +24,27 @@ const Login = (props) => {
       });
   }
 
+  const valiadtionSchema = yup.object().shape({
+    username: yup.string().required("*Username required"),
+    password: yup.string().required("*Password required"),
+  });
+
   return (
     <>
       <h1>Welcome to the Bubble App!</h1>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
+        validationSchema={valiadtionSchema}
         render={props => (
           <Form>
             <div className="field">
               <Field name="username" type="text" placeholder="Username"/>
+              <ErrorMessage name="username" component="div" />
             </div>
             <div className="field">
               <Field name="password" type="password" placeholder="Password"/>
+              <ErrorMessage name="password" component="div" />
             </div>
             <button type="submit">Log in</button>
           </Form>
